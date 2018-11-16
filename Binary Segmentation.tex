@@ -164,12 +164,49 @@ Let \(f^* = \max{0 \leq x \leq 1}|f(x)|\). Let $x$ be such that $|f(x)| = f^*$. 
 %emph{a graph of $f$.}
 %\end{figure}
 
-The proof of the lemma is algebraic and won't be discussed. This lemma tells us if we have a function $f$ as defined above, then the maximum of $f$ must be attained at one of the \(a_i\) in the sum. This is useful to us as our family of statistics \(Z^k_{k_1, k_2}, W^k_{k_1, k_2}, \Theta^k_{k_1, k_2} \)have the same form as $f$; so by applying the lemma we know that the maximum of our statistic will occur at a change-point. The next lemma will prove this.
+The proof of the lemma is algebraic and won't be discussed. This lemma proves that if we have a function $f$ as defined above, then the maximum of $f$ must be attained at one of the \(a_i\) in the sum. This is useful to us as our family of statistics \(Z^k_{k_1, k_2}, W^k_{k_1, k_2}, \Theta^k_{k_1, k_2} \)have the same form as $f$; so by applying the lemma we know that the maximum of our statistic will occur at a change-point. The next lemma will prove this.
 \end{lemma}
+%
+The following setup will be in use throughout Lemma 3.4 to Lemma 3.9. let \(k_1, k_2\) be such that \[\nu_{i_0} \leq k_1 < \nu_{i_0+1} < \cdots < \nu_{i_0+l} < k_2 \leq \nu_{i_0+l+1},\]
+
+where \(0 \leq i_0 \leq m_n - l\), that is the number of change points between our upper and lower test bounds is atmost the total number of change-points minus the number of change-points outside the interval. Since the function \(\Theta\) as defined %from statistics definitions
+is invariant under location shift we may assume without loss of generality that
+\[M_{k_2} - M_{k_1} = 0.\]
+
+Since a location shift doesn't affect the change-points, in the following lemmas when we refer to the mean of a random variable \(X_k\) within the context of segment \( \{ k_1 +1, \cdots, k_2 \} \), we deal not with the actual mean but the mean after a location shift so that the above equation holds.
 
 \begin{lemma}
 %
+Let \( k_1, k_2 \) be such that equation (2.8) holds for some \(l > 0\). Then if \(|\Theta^k_{k_1,k_2}| = \Theta_{k_1,k_2}\), then \( k = \nu_{i_0+i}\) for some \(0 \leq i \leq l\).
 
+Proof:\newline
+Let \(a_i = (\nu_{i_0+i} - k_1)/(k_2 - k_1)\) and \(\theta_i = E[X_{\nu_{i_0+i}}]\). Then
+\[ \Theta^k_{k_1,k_2} = f \Bigg(\frac{k - k_1}{k_2 - k_1}\Bigg ) \sqrt{k_2 - k_1}.\]
+
+Now the result follows from Lemma 2.2.
+\end{lemma}
+%
+%put something interesting in here
+
+
+We need one or both of the following conditions on \(k_1, k_2\) in Lemmas 2.5 through 2.8.
+
+\[s\].
+
+The first condition is that the distance between change points within the interval \( [k_1, k_2]\) is atleast \(2cn^{1-\beta}\) and that the first and last change-point is atleast \(cn^{1-\beta} \) from \( k_1 \) and \( k_2 \) respectively.
+
+The second condition is that the smallest of the maximum distances between the two closest change-points to \(k_1\) and \(k_2\) are atmost \(n^\alpha log \ n\).
+
+\begin{lemma}
+%
+suppose \(k_1, k_2\) satisfy the above (2.10) and the conditions of the theorem hold.
+Then
+\[\max_{k_1<k<k_2}|\Theta^k_{k_1,k_2}| \geq \frac{\delta}{2}cn^{\frac{1}{2} - \beta}.\]
+
+Proof: \newline
+Let \(E[X_{\nu_i}] = \theta \ and \ E[X_{\nu_{i + 1}}] =\)% \theta^'\). %Since \(| \theta - \theta^'| > \delta\), by condition ( \(ii\) ) of the theorem, we get that
+
+%\[ |\theta| |\theta^'| > \frac{\delta}{2} \]% need minimum symbol
 \end{lemma}
 
 \chapter{Consistency estimation}
