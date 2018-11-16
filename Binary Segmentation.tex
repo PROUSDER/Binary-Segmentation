@@ -1,15 +1,18 @@
+
 \documentclass[a4paper, 12pt, notitlepage]{report}
 
 \usepackage{amsmath, amssymb, amsfonts, amsthm}
 %\usepackage{cite}
 \usepackage{graphicx}
+%\graphicspath{ {/images} }
 
 \title{Binary Segmentation}
 \author{Louis Forbes Wright}
 \date{\today}
 
-\newtheorem{thm}{Theorem}[section]
-%\newlemma{lem}{Lemma}[section]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}[theorem]
 
 \begin{document}
 \maketitle
@@ -51,13 +54,13 @@ Signed \dotfill Date \dotfill
 \section*{Abstract}
 We are interested in the problem of seperating the signal from noise in a given dataset. How do we do this?
 we are interested in the consistent estimation of the number and location of change-points and means in the a fixed sample.
-
-Section 1 is an introduction the problem 
-Section 2 defines and expands some useful definitions we will be using
-Section 3 focuses on the reinterpreting the theorem of Binary Segmentation and its associated lemmas
-Section 4  looks at an algorithm based on the theorem and from monte carlo simulations how consistent it is 
-Section 5 applies the theorem to some actual data collected from ...
-
+\begin{itemize}
+\item[] Section 1 is an introduction the problem
+\item[] Section 2 defines and expands some useful definitions we will be using 
+\item[] Section 3 focuses on the reinterpreting the theorem of Binary Segmentation and its associated lemmas 
+\item[] Section 4  looks at an algorithm based on the theorem and from monte carlo simulations how consistent it is 
+\item[] Section 5 applies the theorem to some actual data collected from ... 
+\end{itemize}
 Many thanks to ... who is the inspiration and source of many of the results within this work %\cite{Venk}.
 
 
@@ -69,42 +72,114 @@ Many thanks to ... who is the inspiration and source of many of the results with
 \chapter{Introduction}
 %
 "A change-point is a point after which the stochastic behaviour of a process changes" 
- Let .
+ Let.
 
-Rest of the text introducing this chapter.
-
-\chapter{Important definitions}
+\chapter{Definitions}
 %
 
-\chapter{Summary of the theorem}
-%
-We can now begin our examination of the theorem.
-%\begin{lem}
+\section{Formalisation of the problem }
 
-\begin{equation}
+More formally "A multiple change-point problem deals with processes having more than one change-point. Our problem of interest is the consistent estimation of the number and the locations of the change-points. The problem is described more precisely below. 
 
-Let W be as defined in chapter 2. Then $ \displaystyle P(B_n) \to 1 as n \to \infty $, where
+Let \( {X_i ^{(n)} ;1 \leq i \leq n < \infty} \) be an array of random variables (vectors) and let $F^{(n)}_i$ be the distribution function of the random variable (vector) $X^{(n)}_i$. Let the $n^{th}$ of the array have $m_n$ change-points, that is, there exist \( \nu^{(n)}_1, \cdots, \nu^{(n)}_{m_n} \), where  \(0 =  \nu^{(n)}_0 <  \nu^{(n)}_1 < \cdots < \nu^{(n)}_{m_n} < \nu^{(n)}_{m_{n+1}} = n\), and distribution finctions $G_j$, where \( G_j  \neq G_{j+1}\), for all $j \geq 0$, such that
 
-\end{equation}
+\[ F^{(n)}_i  = G_j, \ if \ \nu^{(n)}_j < i <  \nu^{(n)}_{j+1}, j = 0, \cdots, m_n."\]
 
-%\end{lem}
+\section{Test statistics}
+
+To perform binary segmentation we first need to define the statistic by which we will test the hypothesis, it is natural to use a CUSUM (cumulative sum) statistic
+
+Let \(S_k = X_1 + \cdots + X_k,\ 1 \leq k \leq n\). Then for \(0 \leq k_1 \leq k \leq k_2 \leq n\) the generalised likelihood ratio statistic for any $k$ in the segment \( {k_1 +1, \cdots, k_2} \) is given by
+ \[ Z^k_{k_1, k_2} = \frac{\big [\frac{k - k_1}{k_2 - k_1} \big ](S_{k_2} - S_{k_1}) - (S_k - S_{k_1})}{\sqrt{(k - k_1)(1 - \frac{k - k_1}{k_2 - k_1})}} \]
+
+but it can be shown that \(Z^k_{k_1, k_2}\) can be reformalised as
+
+\[Z^k_{k_1, k_2} = \sqrt{\frac{(k - k_1)(k_2 - k)}{k_2 -k_1}}\Big (\frac{1}{k - k_1}\sum^k_{k_1+1} X_i \ - \ \frac{1}{k_2 - k}\sum^{k_2}_{k+1} X_i \Big ) \] \footnotesize(see appendix)\\
+
+In the second equation we can see that our statistic \(Z^k_{k_1, k_2}\) is related to the difference between the mean of \(\{X_{k_1}, \cdots, X_k\}\) and the mean of \(\{X_{k+1}, \cdots, X_{k_2}\}\). We will also need a similar statistic for the noise and signal of the data. Let \(U_i  = X_i - \mu_i\), \(V_k=  U_1+ \cdots + U_k,\ 1 \leq k \leq n \) and \(M_k =   \mu_1+ \cdots + \mu_k,\ 1 \leq k \leq n\), then
+
+\[W^k_{k_1, k_2} = \frac{\big [\frac{k - k_1}{k_2 - k_1} \big ](V_{k_2} - V_{k_1}) - (V_k - V_{k_1})}{\sqrt{(k - k_1)(1 - \frac{k - k_1}{k_2 - k_1})}} \]
+our noise statistic and
+
+\[\Theta^k_{k_1, k_2} = \frac{\big [\frac{k - k_1}{k_2 - k_1} \big ](M_{k_2} - V_{k_1}) - (M_k - V_{k_1})}{\sqrt{(k - k_1)(1 - \frac{k - k_1}{k_2 - k_1})}} \]
+our signal statistic.
+Let \(\Theta_{k_1, k_2}\) be defined as
+
+\[\Theta_{k_1, k_2} = \max_{k_1 < k < k_2}|\Theta^k_{k_1, k_2}|\]
+
+\chapter{Theory and use of Binary Segmentation}
 %
-%\section{}
+\section{Description of the procedure}
 %
-%\section{}
+By using the previously defined statistic we can determine the change-points of the sample. First we calculate the statistic of the sample at each observation $k$. If the maximum value of the statistic is obtained at $k$ and is larger than the boundary we designate, we reject the hypothesis of no change-point and split the smaple into two subsamples('hence the term "binary') at the change-point location k. We then repeat the operation on the two generated subsamples. After applying this operation to the sample and all subsequent subsamples generated until no significant test-score is produced, we will have obtained the estimated locations and number of the change-points of the sample. Which we will show asymptotically approachs the correct locations and number as more data is evaluated.  %%%needs work%%%
+
+However how can we be certain that the estimated change-points are 
+
+\section{Analysis of the theorem}
 %
-%\section{}
+\begin{theorem}
+ 
+Let \(b_n = n^{\frac{3}{8}}\) be the boundary. Let \( \hat m_n  \) and \( \hat \nu_1, \cdots, \hat \nu_{ \hat m_n} \) respectively be the estimated number and locations of the change-points. Suppose the following conditions hold:
+\begin{itemize}
+
+\item[(i)] \( \inf_i \{ \nu_{i+1} - \nu_i \} \geq 2cn^{1 - \beta} \ \forall n, where \ c >0 \ and \ 0 \leq \beta < \frac{1}{8} \) are independent of n
+
+\item[(ii)] \(\inf_i |\theta_{i+1} - \theta_{i}| \geq \delta\) for some \(\delta > 0\),
+
+\item[(iii)]\(\sup_i |\theta_i| \leq B\) for some \( B > 0\).
+
+\end{itemize}
+
+Then $P(A_n)$ converges to 1, where
+
+\[ A_n = \{\hat m_n = m_n;\ | \hat \nu_j - \nu_j| \leq n^{\frac{3}{4}}, 1 \leq j \leq m_n \}.\]
+
+\end{theorem}
+
+\begin{lemma}
+
+Let \( W^k_{k_1,k_2}\) be as defined in chapter 2. Then $ \displaystyle P(B_n) \to 1\  as\ n \to \infty $, where
+ 
+   \[B_n =\Big \{ \ \max_{0 \leq k_1 < k < k_2 \leq n} | W^k_{k_1, k_2}| \leq 3\sqrt{log\ n}\ \Big  \} \]
+\\
+proof:
+
+\end{lemma}
+
+
+
+ \( W^k_{k_1,k_2}\) is the noise of our test statistic  \( Z^k_{k_1,k_2}\) as defined above. The lemma shows that as we gather more data the noise of the statistic  \( Z^k_{k_1,k_2}\) asymptotically becomes less than \( 3\sqrt{log\ n}\ \), 
+%% make this more useful or remove
+
+\begin{lemma}
 %
-%\section{}
+Let \( l > 0\) be an integer. Let \(0 = a_0 < a_1< \cdots < a_l < a_{l+1} = 1\) and let \(\lambda_0, \cdots , \lambda_l\) be such that, for all \(i, \lambda_i \neq \lambda{i+1}\) and \(\sum^l_{i = 0}(a_{i_1} - a_i)\lambda_i = 0\). Let the function $f$ be defined by
+
+\[f(x) = \frac{\sum^i_{j=1}(a_j - a_{j-1})\lambda_{j-1} + (x - a_i)\lambda_i}{\sqrt{x(1- x)}},\  a_i \geq x \geq a_{i+1},\ \  0\geq i \geq l \]
+
+Let \(f^* = \max{0 \leq x \leq 1}|f(x)|\). Let $x$ be such that $|f(x)| = f^*$. Then there exists $i$ such that \(1 \leq i \leq l\) and \( a_i = x\), that is, the maximum of $|f|$ can be attained at one of the $a_i$'s only. \newline 
+
+%\begin{figure}[h]
+%\includegraphics{Lemma2} %% graph doesn't work "no Lemma2 found"
+%emph{a graph of $f$.}
+%\end{figure}
+
+The proof of the lemma is algebraic and won't be discussed. This lemma tells us if we have a function $f$ as defined above, then the maximum of $f$ must be attained at one of the \(a_i\) in the sum. This is useful to us as our family of statistics \(Z^k_{k_1, k_2}, W^k_{k_1, k_2}, \Theta^k_{k_1, k_2} \)have the same form as $f$; so by applying the lemma we know that the maximum of our statistic will occur at a change-point. The next lemma will prove this.
+\end{lemma}
+
+\begin{lemma}
 %
-%\section{}
-%
-%\section{}
-%
+
+\end{lemma}
 
 \chapter{Consistency estimation}
 %
-
+The result analysed previously is a useful result however Fryzlewicz, Piotr et al showed that you can improve Binary segmentation by testing subsamples of the data chosen randomly%\cite{Wild}
+. In this chapter we show the motivation for this result and use Monte Carlo methods to compute the ??consistency of Binary Segmentation??. %% obviously wrong needs rewording ask Haeron Cho
+\section{Counter-example}
+%
+In some ways binary segmentation can" be considered a 'greedy' procedure in the sense that it is performed sequentially, with each stage depending on the previous ones"%% is a quote reword
+As binary segmentation computes a global search on the dataset and each estimated change-point is accepted on the basis of one test, 
 \chapter{Real world Application}
 %%%%%%%%%% INFORMATION %%%%%%%%%%
 \section{A Note About References}
@@ -151,6 +226,3 @@ Subsections and further divisions can also be used in appendices.
 
 
 \end{document}
-
-
-

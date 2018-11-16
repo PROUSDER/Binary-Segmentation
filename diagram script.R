@@ -18,7 +18,7 @@ for (i in 1:length(changePoints)-1){
   } 
 par(mfrow = c(2,1))
 
-plot(0:(length(data)-1), data, type = 'l')
+plot(0:(length(data)-1), data, type = 'l', xlab ="i", ylab = "a_i")
 abline(h = mean(means)) ### NEED TO ADD CHANGEPOINTS TO GRAPH.
 
 # now we need to create the function defined in the Introduction
@@ -33,7 +33,7 @@ Z_k <- function(sour, k_1, k_2){
   
   test.stat <- NULL
   
-  for (k in k_1+1:k_2-1){
+  for (k in (k_1+1):(k_2-1)){
   
    #for each k in the interval we create a test score, 
    #|z_k|
@@ -54,6 +54,6 @@ output <- Z_k(data, 0,length(data)) # we create a vector of all the test scores
 #estChangePoints <- NULL
 #estChangePoints <- c(estChangePoints, max.col(test.stat))
 
-plot(0:(length(output)-1), output, type = 'l') # we plot the test scores against the index of that data
-boundary <- length(output)^(3/8)               # the critical value for the size of the interval tested
-abline(h = boundary)
+plot(0:(length(output)-1), output, type = 'l', xlab = "x", ylab ="f(x)") # we plot the test scores against the index of that data
+#boundary <- length(output)^(3/8)               # the critical value for the size of the interval tested
+#abline(h = boundary)
