@@ -2,7 +2,7 @@
 \documentclass[a4paper, 12pt, notitlepage]{report}
 
 \usepackage{amsmath, amssymb, amsfonts, amsthm}
-%\usepackage{cite}
+\usepackage{cite}
 \usepackage{graphicx}
 %\graphicspath{ {/images} }
 
@@ -37,7 +37,7 @@
 \begin{center}
 A project of 20 credit points at level 4. % change this
 \\[12pt]
-Supervised by Dr.\ Haeron Cho. 
+Supervised by Dr.\ Haeran Cho. 
 \end{center}
 \thispagestyle{empty}
 \newpage
@@ -58,10 +58,10 @@ we are interested in the consistent estimation of the number and location of cha
 \item[] Section 1 is an introduction the problem
 \item[] Section 2 defines and expands some useful definitions we will be using 
 \item[] Section 3 focuses on the reinterpreting the theorem of Binary Segmentation and its associated lemmas 
-\item[] Section 4  looks at an algorithm based on the theorem and from monte carlo simulations how consistent it is 
-\item[] Section 5 applies the theorem to some actual data collected from ... 
+\item[] Section 4  looks at an algorithm based on the theorem and from monte carlo simulations how consistent it is \cite{Venk}
+\item[] Section 5 applies the theorem to some actual data collected from ... \cite{fryzlewicz2018}
 \end{itemize}
-Many thanks to ... who is the inspiration and source of many of the results within this work %\cite{Venk}.
+Many thanks to ... who is the inspiration and source of many of the results within this work \cite{fryzlewicz2014}.
 
 
 \tableofcontents 
@@ -111,7 +111,7 @@ Let \(\Theta_{k_1, k_2}\) be defined as
 %
 \section{Description of the procedure}
 %
-By using the previously defined statistic we can determine the change-points of the sample. First we calculate the statistic of the sample at each observation $k$. If the maximum value of the statistic is obtained at $k$ and is larger than the boundary we designate, we reject the hypothesis of no change-point and split the smaple into two subsamples('hence the term "binary') at the change-point location k. We then repeat the operation on the two generated subsamples. After applying this operation to the sample and all subsequent subsamples generated until no significant test-score is produced, we will have obtained the estimated locations and number of the change-points of the sample. Which we will show asymptotically approachs the correct locations and number as more data is evaluated.  %%%needs work%%%
+By using the previously defined statistic we can determine the change-points of the sample. First we calculate the statistic of the sample at each observation $k$. If the maximum value of the statistic is obtained at $k$ and is larger than the designated boundary, we reject the hypothesis of no change-point and split the smaple into two subsamples('hence the term "binary') at the change-point location k. We then repeat the operation on the two generated subsamples. After applying this operation to the sample and all subsequent subsamples generated until no significant test-score is produced, we will have obtained the estimated locations and number of the change-points of the sample. Which we will show asymptotically approachs the correct locations and number as more data is evaluated.  %%%needs work%%%
 
 However how can we be certain that the estimated change-points are 
 
@@ -204,9 +204,36 @@ Then
 \[\max_{k_1<k<k_2}|\Theta^k_{k_1,k_2}| \geq \frac{\delta}{2}cn^{\frac{1}{2} - \beta}.\]
 
 Proof: \newline
-Let \(E[X_{\nu_i}] = \theta \ and \ E[X_{\nu_{i + 1}}] =\)% \theta^'\). %Since \(| \theta - \theta^'| > \delta\), by condition ( \(ii\) ) of the theorem, we get that
+Let \(E[X_{\nu_i}] = \theta \ and \ E[X_{\nu_{i + 1}}] = \theta^{'}\). Since \(| \theta - \theta^{'}| > \delta\), by condition (\(ii\)) of the theorem, we get that
+\[ |\theta| \vee |\theta^{'}| > \frac{\delta}{2}.\]
 
-%\[ |\theta| |\theta^'| > \frac{\delta}{2} \]% need minimum symbol
+By the above inequality and the definition of $M_k$ (the partial sum of the means for \(X_i\)) up to $k$ we can see that
+
+\[|M_{\nu_i} - M_{\nu_i - cn^{1-\beta}}| \vee |M_{\nu_i + cn^{1-\beta}} - M_{\nu_i}| > \frac{\delta}{2}cn^{1 - \beta}\]
+%explaination required
+
+From the (2.13) we get that the maximum of \(|M_k - M_{k_1}|\) is atleast \(\frac{\delta}{4}cn^{1-\beta}\). Finally since \[\frac{(k - k_1)(k_2 - k)}{k_2 -k_1} \leq \frac{(k_2-k_1)}{4} \leq \frac{n}{4}\] we get the lemma.
+
+\end{lemma}
+
+\begin{lemma}
+Suppose \(k_1, k_2\) satisfy (2.10) and (2.11) for some \(\alpha < 1 -2\beta \). Let $\nu$ be a change-point that satisfies
+
+\[ \Theta^\nu_{k_1, k_2} > \Theta_{k_1, k_2} - 6\sqrt{log n}.\]
+
+Where \[\Theta^\nu_{k_1, k_2} = \frac{a}{\sqrt{\frac{(\nu - k_1)(k_2 - \nu)}{(k_2 - k_1)}}}\]. Then under the conditions of the theorem, for large n,
+
+\[a > \frac{\delta cn^{1 - \beta}}{5}\]
+
+Proof: \newline
+Observe that
+ \[\Theta^\nu_{k_1, k_2} = \frac{a}{\sqrt{\frac{(\nu - k_1)(k_2 - \nu)}{(k_2 - k_1)}}} \leq 2\sqrt{2}B\sqrt{(\nu -  k_1) \vee (k_2 - \nu)}.\]
+
+Also \((\nu - k_1) \vee (k_2 - \nu)\) is either less than \(n^\alpha log n\) or larger than \(2cn^{1 - \beta} - n^\alpha log n\). Since by Lemma 2.5 the first possibility contradicts (2.14) (because \( \alpha < 1 - 2\beta\)), for large n, we get that
+
+\[ (\nu -  k_1) \vee (k_2 - \nu) \geq 2cn^{1- \beta} - n^\alpha log n.\]
+
+Without loss of generality we could assume that \(2(\nu - k_1) \leq (k_2 - k_1).\) Let \(\nu = \nu_{i_0 + i}\) for some \(1 \leq i \leq l\). Let $\theta$ and $\theta^{'}$ be the mean of $X_\nu$ and $X_{\nu + 1}$ respectively. Then by condition \((ii)\) of the theorem either $|\theta|$ and $|\theta^{'}|$ is greater than $\frac{\delta}{2}$.
 \end{lemma}
 
 \chapter{Consistency estimation}
@@ -252,12 +279,12 @@ Text introducing the/this appendix.
 \section{Appendix section}
 %
 Text of this section.
-
+$\mathbb{R}$
 Subsections and further divisions can also be used in appendices.
 
 %%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%
-%\bibliographystyle{plain}
-%\bibliography{mybib} { }
+\bibliographystyle{plain}
+\bibliography{mybib} { }
 
 %
 

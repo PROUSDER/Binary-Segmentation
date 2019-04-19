@@ -31,7 +31,14 @@ Bootstrap.of.error <- function(data, percentile = 99, simulation.number = 1000){
   
   max.scores.attained <- NULL
   size <- length(data)
+  for(i in 1:simulation.number){
+    max.scores.attained <- c(max.scores.attained, max(Z_k(rnorm(size), 1, size)))
+  }
+  
+  high.percentile <- quantile(max.scores.attained, percentile/100)
+  return(high.percentile)
 }
+
 
 construct.model <- function(sampl, ofs){
   

@@ -1,8 +1,3 @@
-## Residuals for binary-segmentation
-
-error <- (data - signal)^2
-
-
 
 optimise.model <- function(data, modelpar){
   # modelpar is the location of changepoints such that the entries are sorted 
@@ -54,6 +49,8 @@ Z_k <- function(sour, k_1, k_2){
   
   test.stat <- NULL
   
+  cx <- cumsum(sour)
+  
   for (k in (k_1+1):(k_2-1)){
     
     #for each k in the interval we create a test score, 
@@ -71,7 +68,7 @@ Z_k <- function(sour, k_1, k_2){
   return(test.stat)
 }  
 
-Bootstrap.of.error <- function(data){
+OBSE <- function(data){
   est.error <- NULL
   for(i in 1:1000){
   simulated_values <- round(runif(round(length(data)/20), min = 0, max = length(data)))
@@ -83,10 +80,35 @@ Bootstrap.of.error <- function(data){
   est.error[significant.quartile]
 }
 
-variance.est <- function(data){# using 'MAD'
-  x.tilde <- median(data)
-  centralised.x <- data - x.tilde
-  variance.estimate <- median(abs(centralised.x))
-  
+variance.est <- function(data){
+  # using 'first lag MAD, 
+  #using the first lag will remove the effect of the signal from the data'
+  variance.estimate <- mad(diff(data))
   return(variance.estimate)
+}
+
+Bootstrap.of.error <- function(data, percentile = 99, simulation.number = 1000){
+  #we aim to find what effect we can expect the error to have on the CUSUM (Z_k) we are using, 
+  #assuming the error is standard normal. Then we take the 99%-ile of the simulated CUSUMs
+  #and use this to determine if a the maximum CUSUM score of a binary-segmentation operation is significant.
+  
+  
+  max.scores.attained <- NULL
+ size <- length(data)
+ for(i in 1:simulation.number){
+   max.scores.attained <- c(max.scores.attained, max(Z_k(rnorm(size), 1, size)))
+ }
+
+ high.percentile <- quantile(max.scores.attained, percentile/100)
+ return(high.percentile)
+}
+
+static_bootstrap_error <- function(){
+  stored_errors <- NULL
+  
+  for(j in 1:100){
+    stored_errors <- c(stored_errors, Bootstrap.of.error(rnorm(j * 50)))
+    print(j)
+  }
+  return(stored_errors)
 }
